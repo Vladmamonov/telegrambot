@@ -2,26 +2,17 @@ import re
 import requests
 import json
 
-URL = 'https://www.nbrb.by/api/exrates/currencies'
-
+cur_ids = {"USD":145, "EUR":19}
 
 def load_exchange():
-    return json.loads(requests.get(URL).text)
+    URL = 'https://www.nbrb.by/api/exrates/rates/145'
+    response = requests.get(URL)
+    print(response.json())
+    return response.json()
+
+def cur(currency:str):
+    curs_usd = load_exchange(currency)
+    return curs_usd['Cur_OfficialRate']
 
 
-def get_exchange(ccy_key):
-    for exc in load_exchange():
-        if ccy_key == exc['ccy']:
-            return exc
-    return False
 
-
-def get_exchanges(ccy_pattern):
-    result = []
-    ccy_pattern = re.escape(ccy_pattern) + '.*'
-
-
-for exc in load_exchange():
-    if re.match(ccy_pattern, exc['ccy'], re.IGNORECASE) is not None:
-        result.append(exc)
-    return result
